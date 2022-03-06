@@ -7,18 +7,23 @@ echo -ne "
 
 "
 
+create_a_new_empty_GPT_partition_table='g q ' 
+echo $create_a_new_empty_GPT_partition_table
 
-create_a_new_empty_GPT_partition_table='g  ' 
+add_a_new_partition1='n'
+echo $add_a_new_partition1
 
-add_a_new_partition1='n '
+change_a_partition_type='t'
+echo $change_a_partition_type
 
-change_a_partition_type='t '
+list_known_partition_types='l'
+echo $list_known_partition_types
 
-list_known_partition_types='l '
+add_a_new_partition2='n'
+echo $add_a_new_partition2
 
-add_a_new_partition2='n '
-
-write_table_to_disk_and_exit='w '
+write_table_to_disk_and_exit='w'
+echo $write_table_to_disk_and_exit
 
 echo "$create_a_new_empty_GPT_partition_table" 	| fdisk ${DISK}
 echo "$add_a_new_partition1" 					| fdisk ${DISK}
