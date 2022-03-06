@@ -5,8 +5,15 @@ echo -ne "
             Please select preset settings for your system              
 ------------------------------------------------------------------------
 "
-
-
+read machine-name
+read user-name
+read password
+read retype-password
+read grub-username
+read grub-password
+read grub-retype-password
+read luks-password
+read retype-luks-password
 
 # selection for disk type
 
