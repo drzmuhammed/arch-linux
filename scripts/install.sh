@@ -63,7 +63,7 @@ echo -n "${luks_password}" | cryptsetup luksOpen ${disk}2 cryptedsda2
 mkfs.btrfs /dev/mapper/cryptedsda2
 
 # store uuid of encrypted partition for grub
-    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${disk}2 >> $CONFIGS_DIR/setup.conf
+    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${disk}2) >> $CONFIGS_DIR/setup.conf
 
 mount /dev/mapper/cryptedsda2 /mnt
 
@@ -104,3 +104,4 @@ echo "${machine_name}" >> /etc/hostname
 echo "127.0.0.1 localhost" >> /etc/hosts
 echo "::1       localhost" >> /etc/hosts
 echo "127.0.1.1 ${machine_name}.localdomain ${machine_name}" >> /etc/hosts
+exit
