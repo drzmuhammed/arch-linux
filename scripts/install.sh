@@ -149,7 +149,7 @@ while true; do
     set_option FS luks
     break
   else
-    echo -e "\nPasswords do not match. Please try again. \n"; filesystem;;
+    echo -e "\nPasswords do not match. Please try again. \n"; filesystem;
     esac
   fi
 done
