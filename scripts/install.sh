@@ -58,8 +58,8 @@ echo -ne "
 "
 
 mkfs.fat -F32 ${disk}1
-echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${disk}2
-echo -n "${luks_password}" | cryptsetup luksOpen ${disk}2 cryptedsda2
+echo -n "$luks_password" | cryptsetup -y -v luksFormat -f ${disk}2
+echo -n "$luks_password" | cryptsetup luksOpen ${disk}2 cryptedsda2
 mkfs.btrfs /dev/mapper/cryptedsda2
 
 # store uuid of encrypted partition for grub
@@ -85,7 +85,7 @@ mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@var /dev/map
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@swap /dev/mapper/cryptedsda2 /mnt/swap
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@snapshots /dev/mapper/cryptedsda2 /mnt/snapshots
-mount /dev/sda1 /mnt/boot
+mount /dev/${disk}1 /mnt/boot
 
 pacstrap /mnt base linux linux-firmware vim intel-ucode btrfs-progs
 
