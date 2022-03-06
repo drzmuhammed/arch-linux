@@ -6,25 +6,19 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-umount -A --recursive /mnt # make sure everything is unmounted before we start
 
-create_a_new_empty_GPT_partition_table='g q ' 
-echo $create_a_new_empty_GPT_partition_table
 
-add_a_new_partition1='n'
-echo $add_a_new_partition1
+create_a_new_empty_GPT_partition_table='g  ' 
 
-change_a_partition_type='t'
-echo $change_a_partition_type
+add_a_new_partition1='n '
 
-list_known_partition_types='l'
-echo $list_known_partition_types
+change_a_partition_type='t '
 
-add_a_new_partition2='n'
-echo $add_a_new_partition2
+list_known_partition_types='l '
 
-write_table_to_disk_and_exit='w'
-echo $write_table_to_disk_and_exit
+add_a_new_partition2='n '
+
+write_table_to_disk_and_exit='w '
 
 echo "$create_a_new_empty_GPT_partition_table" 	| fdisk ${DISK}
 echo "$add_a_new_partition1" 					| fdisk ${DISK}
