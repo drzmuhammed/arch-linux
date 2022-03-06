@@ -5,7 +5,7 @@ echo -ne "
             Please select preset settings for your system              
 ------------------------------------------------------------------------
 "
-echo -ne "Please name your machine , this will be the host name: \n "
+echo -ne "\n Please name your machine , this will be the host name: \n "
 read machine_name
 echo -ne "\n Please enter your username: \n"
 read user_name
@@ -85,23 +85,9 @@ mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@var /dev/map
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@swap /dev/mapper/cryptedsda2 /mnt/swap
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@snapshots /dev/mapper/cryptedsda2 /mnt/snapshots
-mount /dev/${disk}1 /mnt/boot
-
-pacstrap /mnt base linux linux-firmware vim intel-ucode btrfs-progs
+mount ${disk}1 /mnt/boot
+pacman -Sy 
+pacstrap /mnt base linux-lts linux-lts-headers linux-firmware vim intel-ucode btrfs-progs
 
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
-
-arch-chroot /mnt
-
-ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
-hwclock --systohc
-echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-locale-gen
-echo "LANG=en_US.UTF-8" >> /etc/locale.conf
-echo "us" >> /etc/vconsole.conf
-echo "${machine_name}" >> /etc/hostname
-echo "127.0.0.1 localhost" >> /etc/hosts
-echo "::1       localhost" >> /etc/hosts
-echo "127.0.1.1 ${machine_name}.localdomain ${machine_name}" >> /etc/hosts
-exit
