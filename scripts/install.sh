@@ -26,8 +26,7 @@ echo -ne "
 
 "
 
-(echo g; echo n; echo t; echo 1; echo ""; echo +512M; echo n; echo p; echo 2; echo ""; echo ""; echo w; echo q) | fdisk /dev/sda
-$ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << FDISK_CMDS  | sudo fdisk /dev/sdc
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << FDISK_CMDS  | sudo fdisk /dev/sdc
 g      # create new GPT partition
 n      # add new partition
 1      # partition number
@@ -99,7 +98,7 @@ echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" >> /etc/locale.conf
 echo "us" >> /etc/vconsole.conf
-echo "$hostname" >> /etc/hostname
+echo "${machine_name}" >> /etc/hostname
 echo "127.0.0.1 localhost" >> /etc/hosts
 echo "::1       localhost" >> /etc/hosts
-echo "127.0.1.1 $hostname.localdomain $hostname" >> /etc/hosts
+echo "127.0.1.1 ${machine_name}.localdomain ${machine_name}" >> /etc/hosts
