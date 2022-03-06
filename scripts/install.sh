@@ -5,40 +5,18 @@ echo -ne "
             Please select preset settings for your system              
 ------------------------------------------------------------------------
 "
-read machine-name
-read user-name
-read password
-read retype-password
-read grub-username
-read grub-password
-read grub-retype-password
-read luks-password
-read retype-luks-password
-
-# selection for disk type
-
-userinfo () {
-read -p "Please enter your username: " username
-set_option USERNAME ${username,,} # convert to lower case as in issue #109 
-while true; do
-  echo -ne "Please enter your password: \n"
-  read -s password # read password without echo
-
-  echo -ne "Please repeat your password: \n"
-  read -s password2 # read password without echo
-
-  if [ "$password" = "$password2" ]; then
-    set_option PASSWORD $password
-    break
-  else
-    echo -e "\nPasswords do not match. Please try again. \n"
-  fi
-done
-read -rep "Please enter your hostname: " hostname
-set_option NAME_OF_MACHINE $hostname
-}
-
-
+echo -ne "Please name your machine , this will be the host name: \n "
+read machine_name
+echo -ne "\n Please enter your username: \n"
+read user_name
+echo -ne "\n Please enter your password: \n"
+read -s password # read password without echo
+echo -ne "\n Please provide a username for accessing grub: \n"
+read grub_username
+echo -ne "\n Please provide a password for accessing grub: \n"
+read -s grub_password
+echo -ne "\n Please enter disk encryption password: \n"
+read -s luks_password
 
 
 echo -ne "
@@ -48,33 +26,26 @@ echo -ne "
 
 "
 
-create_a_new_empty_GPT_partition_table='g q ' 
-echo $create_a_new_empty_GPT_partition_table
+(echo g; echo n; echo t; echo 1; echo ""; echo +512M; echo n; echo p; echo 2; echo ""; echo ""; echo w; echo q) | fdisk /dev/sda
+$ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << FDISK_CMDS  | sudo fdisk /dev/sdc
+g      # create new GPT partition
+n      # add new partition
+1      # partition number
+       # default - first sector 
++512MiB # partition size
+n      # add new partition
+2      # partition number
+       # default - first sector 
+       # default - last sector 
+t      # change partition type
+1      # partition number
+83     # Linux filesystem
+t      # change partition type
+2      # partition number
+83     # Linux filesystem
+w      # write partition table and exit
+FDISK_CMDS
 
-add_a_new_partition1='n'
-echo $add_a_new_partition1
-
-change_a_partition_type='t'
-echo $change_a_partition_type
-
-list_known_partition_types='l'
-echo $list_known_partition_types
-
-add_a_new_partition2='n'
-echo $add_a_new_partition2
-
-write_table_to_disk_and_exit='w'
-echo $write_table_to_disk_and_exit
-
-echo "$create_a_new_empty_GPT_partition_table" 	| fdisk ${DISK}
-echo "$add_a_new_partition1" 					| fdisk ${DISK}
-echo "$change_a_partition_type" 				| fdisk ${DISK}
-echo "$list_known_partition_types" 				| fdisk ${DISK}
-echo "$add_a_new_partition2" 					| fdisk ${DISK}
-echo "$write_table_to_disk_and_exit" 			| fdisk ${DISK}
-
-# reread partition table to ensure it is correct
-partprobe ${DISK}
 
 # make filesystems
 echo -ne "
@@ -84,24 +55,16 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-if [[ "${DISK}" =~ "nvme" ]]; then
-    partition1=${DISK}p1
-    partition2=${DISK}p2
-else
-    partition1=${DISK}1
-    partition2=${DISK}2
-fi
 
-
-mkfs.fat -F32 ${partition1}
-echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat ${partition2}
-echo -n "${LUKS_PASSWORD}" | cryptsetup luksOpen ${partition2} cryptedPart-2
-mkfs.btrfs /dev/mapper/cryptedPart-2
+mkfs.fat -F32 /dev/sda1
+echo -n "${luks_password}" | cryptsetup -y -v luksFormat /dev/sda2
+echo -n "${luks_password}" | cryptsetup luksOpen /dev/sda2 cryptedsda2
+mkfs.btrfs /dev/mapper/cryptedsda2
 
 # store uuid of encrypted partition for grub
-    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${partition2}) >> $CONFIGS_DIR/setup.conf
+    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value /dev/sda2) >> $CONFIGS_DIR/setup.conf
 
-mount /dev/mapper/cryptedPart-2 /mnt
+mount /dev/mapper/cryptedsda2 /mnt
 
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
@@ -116,12 +79,12 @@ mount -o noatime,compress=zstd:1,space_cache=v2,discard=async,subvol=@ /dev/mapp
 
 mkdir /mnt/{home,swap,var,tmp,boot,snapshots}
 
-mount -o noatime,compress=zstd:1,space_cache=v2,discard=async,subvol=@home /dev/mapper/cryptedPart-2 /mnt/home
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@var /dev/mapper/cryptedPart-2 /mnt/var
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@swap /dev/mapper/cryptedPart-2 /mnt/swap
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@tmp /dev/mapper/cryptedPart-2 /mnt/tmp
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@snapshots /dev/mapper/cryptedPart-2 /mnt/snapshots
-mount ${partition1} /mnt/boot
+mount -o noatime,compress=zstd:1,space_cache=v2,discard=async,subvol=@home /dev/mapper/cryptedsda2 /mnt/home
+mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@var /dev/mapper/cryptedsda2 /mnt/var
+mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@swap /dev/mapper/cryptedsda2 /mnt/swap
+mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
+mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@snapshots /dev/mapper/cryptedsda2 /mnt/snapshots
+mount /dev/sda1 /mnt/boot
 
 pacstrap /mnt base linux linux-firmware vim intel-ucode btrfs-progs
 
