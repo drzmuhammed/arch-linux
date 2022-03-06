@@ -25,8 +25,10 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
+disk=$(lsblk -n --output TYPE,KNAME | awk '$1=="disk"{print "/dev/"$2}')
 
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << FDISK_CMDS  | sudo fdisk /dev/sda
+
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << FDISK_CMDS  | fdisk $disk
 g      # create new GPT partition
 n      # add new partition
 1      # partition number
@@ -55,13 +57,13 @@ echo -ne "
 
 "
 
-mkfs.fat -F32 /dev/sda1
-echo -n "${luks_password}" | cryptsetup -y -v luksFormat /dev/sda2
-echo -n "${luks_password}" | cryptsetup luksOpen /dev/sda2 cryptedsda2
+mkfs.fat -F32 $disk1
+echo -n "${luks_password}" | cryptsetup -y -v luksFormat $disk2
+echo -n "${luks_password}" | cryptsetup luksOpen $disk2 cryptedsda2
 mkfs.btrfs /dev/mapper/cryptedsda2
 
 # store uuid of encrypted partition for grub
-    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value /dev/sda2) >> $CONFIGS_DIR/setup.conf
+    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value $disk2 >> $CONFIGS_DIR/setup.conf
 
 mount /dev/mapper/cryptedsda2 /mnt
 
@@ -74,7 +76,7 @@ btrfs subvolume create /mnt/@snapshots
 
 umount /mnt
 
-mount -o noatime,compress=zstd:1,space_cache=v2,discard=async,subvol=@ /dev/mapper/cryptedPart-2 /mnt
+mount -o noatime,compress=zstd:1,space_cache=v2,discard=async,subvol=@ /dev/mapper/cryptedsda2 /mnt
 
 mkdir /mnt/{home,swap,var,tmp,boot,snapshots}
 
