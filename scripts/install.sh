@@ -137,7 +137,7 @@ echo -ne "
 filesystem () {
 # This function will handle file systems. At this moment we are handling only btrfs
 
-while true; do
+
   echo -ne "Please enter your luks password: \n"
   read -s luks_password # read password without echo
 
@@ -150,8 +150,7 @@ while true; do
     break
   else
     echo -e "\nPasswords do not match. Please try again. \n"; filesystem;
-  fi
-done
+
 }
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
