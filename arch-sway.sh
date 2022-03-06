@@ -17,7 +17,9 @@ CONFIGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 set +a
 
 touch $CONFIGS_DIR/setup.conf
-( bash $SCRIPT_DIR/scripts/install.sh )|& tee install.log
+( bash $SCRIPT_DIR/scripts/0-arch-preconfiguration.sh )|& tee 0-arch-preconfiguration.log
+( bash $SCRIPT_DIR/scripts/1-arch-base-system.sh )|& tee 1-arch-base-system.log
+
 cp -v *.log /mnt/home/$USERNAME
 
 echo -ne "
