@@ -16,12 +16,8 @@ SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 CONFIGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/configs
 set +a
 
-#( bash $SCRIPT_DIR/scripts/startup.sh )|& tee startup.log
-source $CONFIGS_DIR/setup.conf
+touch $CONFIGS_DIR/setup.conf
 ( bash $SCRIPT_DIR/scripts/install.sh )|& tee install.log
-#( arch-chroot /mnt $HOME/arch-sway/scripts/1-setup.sh )|& tee 1-setup.log
-#( arch-chroot /mnt /usr/bin/runuser -u $USERNAME -- /home/$USERNAME/arch-sway/scripts/2-user.sh )|& tee 2-user.log
-#( arch-chroot /mnt $HOME/arch-sway/scripts/3-post-setup.sh )|& tee 3-post-setup.log
 cp -v *.log /mnt/home/$USERNAME
 
 echo -ne "
