@@ -150,7 +150,6 @@ while true; do
     break
   else
     echo -e "\nPasswords do not match. Please try again. \n"; filesystem;
-    esac
   fi
 done
 }
