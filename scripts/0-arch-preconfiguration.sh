@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+timedatectl set-ntp true
+loadkeys us
+
 echo -ne "
 ------------------------------------------------------------------------
             Please select preset settings for your system              
@@ -86,7 +89,14 @@ mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@swap /dev/ma
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@snapshots /dev/mapper/cryptedsda2 /mnt/snapshots
 mount ${disk}1 /mnt/boot
-pacman -Sy 
+
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+pacman -S --noconfirm --needed reflector rsync grub
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+mkdir /mnt &>/dev/null # Hiding error message if any
+
+pacman -S --noconfirm archlinux-keyring
 pacstrap /mnt base linux-lts linux-lts-headers linux-firmware vim intel-ucode btrfs-progs
 
 genfstab -U /mnt >> /mnt/etc/fstab
