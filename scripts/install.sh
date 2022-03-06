@@ -26,7 +26,7 @@ echo -ne "
 
 "
 
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << FDISK_CMDS  | sudo fdisk /dev/sdc
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << FDISK_CMDS  | sudo fdisk /dev/sda
 g      # create new GPT partition
 n      # add new partition
 1      # partition number
