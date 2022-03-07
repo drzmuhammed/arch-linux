@@ -63,7 +63,9 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-pacman -S --needed - < $PKGS_DIR/base-pacman
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+pacman -Sy --noconfirm --needed
+pacman -S --noconfirm --needed - < $PKGS_DIR/base-pacman
 
 echo -ne "
 
@@ -72,11 +74,12 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-sed 's/MODULES=()/MODULES=(btrfs)/g' /etc/mkinitcpio.conf
-sed 's/HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems resume fsck)/g' /etc/mkinitcpio.conf
+sed 's/^MODULES=()/MODULES=(btrfs)/' /etc/mkinitcpio.conf
+sed 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems resume fsck)/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
+ENCRYPTED_PARTITION_UUID=$(cat setup.conf)
 sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:cryptedsda2 root=/dev/mapper/cryptedsda2 %g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 mkinitcpio -p linux
@@ -92,7 +95,6 @@ touch swap/swapfile
 truncate -s 0 ./swap/swapfile
 chattr +C ./swap/swapfile
 btrfs property set ./swap/swapfile compression none
-lsattr /swap
 dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
 mkswap /swap/swapfile
 chmod 600 /swap/swapfile
@@ -120,18 +122,31 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
+echo -ne "
+enabling acpid.service
+"
 systemctl enable acpid
-echo -ne "  enabling acpid.service"
+echo -ne "
+enabling  apparmor.service
+"
 systemctl enable apparmor
-echo -ne "  enabling  apparmor.service"
+echo -ne " 
+enabling  auditd.service
+"
 systemctl enable auditd
-echo -ne "  enabling  auditd.service"
+echo -ne "
+enabling  bluetooth.service
+"
 systemctl enable bluetooth
-echo -ne "  enabling  bluetooth.service"
+echo -ne "
+enabling  cpupower.service
+"
 systemctl enable cpupower
-echo -ne "  enabling  cpupower.service"
+
+echo -ne "
+enabling  fail2ban.service
+"
 systemctl enable fail2ban
-echo -ne "  enabling  fail2ban.service"
 systemctl enable fstrim.timer
 echo -ne "  enabling  fstrim.timer"
 systemctl enable NetworkManager
@@ -151,5 +166,6 @@ echo -ne "  enabling  tlp.service"
 systemctl enable ufw
 echo -ne "  enabling  ufw.service"
 
+sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 umount -a
