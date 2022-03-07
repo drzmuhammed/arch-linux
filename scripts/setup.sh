@@ -80,4 +80,21 @@ grub-mkconfig -o /boot/grub/grub.cfg
 sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:cryptedsda2 root=/dev/mapper/cryptedsda2 %g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
+echo -ne "
+
+-------------------------------------------------------------------------
+                            configuring swap
+-------------------------------------------------------------------------
+
+"
+touch swap/swapfile
+truncate -s 0 ./swap/swapfile
+chattr +C ./swap/swapfile
+btrfs property set ./swap/swapfile compression none
+lsattr /swap
+dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
+mkswap /swap/swapfile
+chmod 600 /swap/swapfile
+swapon /swap/swapfile lo
+echo -ne "/swap/swapfile none swap defaults 0 0" >> /etc/fstab
 
