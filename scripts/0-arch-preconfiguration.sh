@@ -76,7 +76,14 @@ echo -ne "
 "
 
 mkfs.fat -F32 ${disk}1
-echo -n YES\n$LUKS_PASSWORD\n$LUKS_PASSWORD | cryptsetup -v luksFormat ${disk}2
+
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << LUKS_CMD | cryptsetup -v luksFormat ${disk}2
+$MACHINE_NAME
+YES
+$LUKS_PASSWORD
+$LUKS_PASSWORD
+LUKS_CMD
+
 echo -n "$LUKS_PASSWORD" | cryptsetup luksOpen ${disk}2 cryptedsda2
 mkfs.btrfs -f /dev/mapper/cryptedsda2
 
