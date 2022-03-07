@@ -96,8 +96,8 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 
-pacman -S --noconfirm archlinux-keyring
-pacstrap /mnt base linux-lts linux-lts-headers linux-firmware vim btrfs-progs
+pacman -S archlinux-keyring
+pacstrap /mnt $(cat $PACKAGE_DIR/base-pacstrap)
 
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
