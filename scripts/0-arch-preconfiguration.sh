@@ -1,13 +1,12 @@
 #!/bin/bash
 
-timedatectl set-ntp true
-loadkeys us
-
 echo -ne "
 ------------------------------------------------------------------------
             Please select preset settings for your system              
 ------------------------------------------------------------------------
 "
+timedatectl set-ntp true
+loadkeys us
 
 echo -ne "
 Please name your machine , this will be the host name:
@@ -68,8 +67,6 @@ t      # change partition type
 w      # write partition table and exit
 FDISK_CMDS
 
-
-# make filesystems
 echo -ne "
 
 -------------------------------------------------------------------------
@@ -79,7 +76,7 @@ echo -ne "
 "
 
 mkfs.fat -F32 ${disk}1
-(echo -n "YES"; echo -n "$LUKS_PASSWORD"; echo -n "$LUKS_PASSWORD") | cryptsetup -y -v luksFormat ${disk}2
+echo -n YES\n$LUKS_PASSWORD\n$LUKS_PASSWORD | cryptsetup -v luksFormat ${disk}2
 echo -n "$LUKS_PASSWORD" | cryptsetup luksOpen ${disk}2 cryptedsda2
 mkfs.btrfs -f /dev/mapper/cryptedsda2
 
@@ -114,12 +111,12 @@ echo -ne "
 ------------------------------------------------------------------------
 "
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacman -S --noconfirm --needed reflector rsync grub
+pacman -S --noconfirm reflector
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 
-pacman -S archlinux-keyring
+pacman -S --noconfirm archlinux-keyring
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap)
 
 cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
