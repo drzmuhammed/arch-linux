@@ -97,7 +97,7 @@ reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 
 pacman -S archlinux-keyring
-pacstrap /mnt $(cat $PACKAGE_DIR/base-pacstrap)
+pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap)
 
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
