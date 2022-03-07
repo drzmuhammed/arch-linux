@@ -25,7 +25,7 @@ grub-btrfs
 htop
 inetutils
 libb64
-linux-lts-headers
+linux-headers
 mesa
 mtools
 ncdu
