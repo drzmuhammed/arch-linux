@@ -26,9 +26,10 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-sed
-mkinitcpio -p linux
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
-grub-mkconfig -o /boot/grub/grub.cfg
-sed
-grub-mkconfig -o /boot/grub/grub.cfg
+#sed
+#mkinitcpio -p linux
+#grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
+#grub-mkconfig -o /boot/grub/grub.cfg
+#sed
+#grub-mkconfig -o /boot/grub/grub.cfg
+exit
