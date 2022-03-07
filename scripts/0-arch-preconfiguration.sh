@@ -97,7 +97,7 @@ reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 
 pacman -S --noconfirm archlinux-keyring
-pacstrap /mnt base linux-lts linux-lts-headers linux-firmware vim intel-ucode btrfs-progs
+pacstrap /mnt base linux-lts linux-lts-headers linux-firmware vim btrfs-progs
 
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
