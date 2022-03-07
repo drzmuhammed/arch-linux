@@ -120,45 +120,36 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-systemctl enable acpid.service
+systemctl enable acpid
 echo -ne "  enabling acpid.service"
-systemctl enable apparmor.service
+systemctl enable apparmor
 echo -ne "  enabling  apparmor.service"
-systemctl enable auditd.service
+systemctl enable auditd
 echo -ne "  enabling  auditd.service"
-systemctl enable bluetooth.service
+systemctl enable bluetooth
 echo -ne "  enabling  bluetooth.service"
-systemctl enable cpupower.service
+systemctl enable cpupower
 echo -ne "  enabling  cpupower.service"
-systemctl enable fail2ban.service
+systemctl enable fail2ban
 echo -ne "  enabling  fail2ban.service"
 systemctl enable fstrim.timer
 echo -ne "  enabling  fstrim.timer"
-systemctl enable NetworkManager.service
+systemctl enable NetworkManager
 echo -ne "  enabling  NetworkManager.service"
 systemctl enable reflector.timer
 echo -ne "  enabling reflector.timer"
-systemctl enable systemd-remount-fs.service
+systemctl enable systemd-remount-fs
 echo -ne "  enabling systemd-remount-fs.service"
-systemctl enable systemd-resolved.service
+systemctl enable systemd-resolved
 echo -ne "  enabling  systemd-resolved.service"
-systemctl enable systemd-timesyncd.service
+systemctl enable systemd-timesyncd
 echo -ne "  enabling  systemd-timesyncd.service"
-systemctl enable thermald.service
+systemctl enable thermald
 echo -ne "  enabling  thermald.service"
-systemctl enable tlp.service
+systemctl enable tlp
 echo -ne "  enabling  tlp.service"
-systemctl enable ufw.service
+systemctl enable ufw
 echo -ne "  enabling  ufw.service"
 
-echo -ne "
--------------------------------------------------------------------------
-                   User Setup
--------------------------------------------------------------------------
-
-"
-$(cat $CONFIGS_DIR/user-name.txt)
-$(cat $CONFIGS_DIR/user-password.txt)
-sed 's/#%wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' visudo
 
 umount -a
