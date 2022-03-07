@@ -1,6 +1,8 @@
 linux
 linux-firmware
 vim
+grub
+grub-btrfs
 btrfs-progs
 base
 base-devel
