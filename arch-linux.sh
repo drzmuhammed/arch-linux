@@ -18,9 +18,9 @@ PKGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/
 set +a
 
 touch $CONFIGS_DIR/setup.conf
-( bash $SCRIPTS_DIR/0-arch-preconfiguration.sh )|& tee 0-arch-preconfiguration.log
+( bash $SCRIPTS_DIR/presetup.sh )|& tee presetup.log
 arch-chroot /mnt 
-( bash $SCRIPTS_DIR/1-arch-base-system.sh )|& tee 1-arch-base-system.log
+( bash $SCRIPTS_DIR/setup.sh )|& tee setup.log
 
 cp -v *.log /mnt/home/$user_name
 
@@ -29,6 +29,8 @@ echo -ne "
                     automated arch linux installer
 -------------------------------------------------------------------------
                         system setup complete
+-------------------------------------------------------------------------
+                        system is ready to use
 -------------------------------------------------------------------------
 
 "
