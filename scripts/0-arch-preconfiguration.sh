@@ -78,7 +78,6 @@ echo -ne "
 mkfs.fat -F32 ${disk}1
 
 sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << LUKS_CMD | cryptsetup -v luksFormat ${disk}2
-$MACHINE_NAME
 YES
 $LUKS_PASSWORD
 $LUKS_PASSWORD
