@@ -1,5 +1,6 @@
 linux-lts
-linux-lts-headers
 linux-firmware
 vim
 btrfs-progs
+base
+base-devel
