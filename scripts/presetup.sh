@@ -8,36 +8,50 @@ echo -ne "
 timedatectl set-ntp true
 loadkeys us
 
+touch $CONFIGS_DIR/1.txt
+touch $CONFIGS_DIR/2.txt
+touch $CONFIGS_DIR/3.txt
+touch $CONFIGS_DIR/4.txt
+touch $CONFIGS_DIR/5.txt
+touch $CONFIGS_DIR/6.txt
+touch $CONFIGS_DIR/7.txt
+touch $CONFIGS_DIR/8.txt
+
 echo -ne "
 Please name your machine , this will be the host name:
 "
 read MACHINE_NAME
+echo $MACHINE_NAME >> $CONFIGS_DIR/1.txt
 
 echo -ne "
 Please enter your username:
 "
 read USER_NAME
+echo $USER_NAME >> $CONFIGS_DIR/2.txt
 
 echo -ne "
 Please enter your password:
 "
 read -s USER_PASSWORD # read password without echo
+echo $USER_PASSWORD >> $CONFIGS_DIR/3.txt
 
 echo -ne "
 Please enter grub username for accessing grub: 
 "
 read GRUB_USERNAME
+echo $GRUB_USERNAME >> $CONFIGS_DIR/4.txt
 
 echo -ne "
 Please provide a password for accessing grub:
 "
 read -s GRUB_PASSWORD
+echo $GRUB_PASSWORD >> $CONFIGS_DIR/5.txt
 
 echo -ne "
 Please enter disk encryption password:
 "
 read -s LUKS_PASSWORD
-
+echo $LUKS_PASSWORD >> $CONFIGS_DIR/6.txt
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -77,17 +91,20 @@ echo -ne "
 
 mkfs.fat -F32 ${disk}1
 cryptsetup -y -v luksFormat ${disk}2
-#sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << LUKS_CMD | cryptsetup -v luksFormat ${disk}2
-#YES
-#$LUKS_PASSWORD
-#$LUKS_PASSWORD
-#LUKS_CMD
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << CRYPTSETUP_CMD | cryptsetup -v luksFormat ${disk}2
+YES
+cat $CONFIGS_DIR/6.txt
+cat $CONFIGS_DIR/6.txt
+CRYPTSETUP_CMD
 
-echo -n "$LUKS_PASSWORD" | cryptsetup luksOpen ${disk}2 cryptedsda2
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << LUKSOPEN_CMD | cryptsetup luksOpen ${disk}2 cryptedsda2
+cat $CONFIGS_DIR/6.txt
+LUKSOPEN_CMD
+
 mkfs.btrfs -f /dev/mapper/cryptedsda2
 
 # store uuid of encrypted partition for grub
-#    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${disk}2) >> $CONFIGS_DIR/setup.conf
+echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${disk}2) >> $CONFIGS_DIR/7.txt
 
 mount /dev/mapper/cryptedsda2 /mnt
 
