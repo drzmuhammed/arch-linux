@@ -79,8 +79,8 @@ echo -ne "
 "
 
 mkfs.fat -F32 ${disk}1
-echo -n "$luks_password" | cryptsetup -y -v luksFormat ${disk}2
-echo -n "$luks_password" | cryptsetup luksOpen ${disk}2 cryptedsda2
+{echo -n "YES"} {echo -n "$LUKS_PASSWORD"} {echo -n "$LUKS_PASSWORD"} | cryptsetup -y -v luksFormat ${disk}2
+echo -n "$LUKS_PASSWORD" | cryptsetup luksOpen ${disk}2 cryptedsda2
 mkfs.btrfs -f /dev/mapper/cryptedsda2
 
 # store uuid of encrypted partition for grub
@@ -108,6 +108,11 @@ mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@tmp /dev/map
 mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@snapshots /dev/mapper/cryptedsda2 /mnt/snapshots
 mount ${disk}1 /mnt/boot
 
+echo -ne "
+------------------------------------------------------------------------
+            Setting up pacman and arch core              
+------------------------------------------------------------------------
+"
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
@@ -120,5 +125,10 @@ pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap)
 cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
+echo -ne "
+------------------------------------------------------------------------
+            Setting up filesystem table             
+------------------------------------------------------------------------
+"
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
