@@ -3,7 +3,6 @@ acpid
 arch-audit
 autoconf
 automake
-base-devel
 bash-completion
 bison
 binutils
@@ -54,7 +53,6 @@ thermald
 tlp
 usbutils
 ufw
-wf-recorder
 wireless_tools
 wpa_supplicant
 xdg-user-dirs
