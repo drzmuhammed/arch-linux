@@ -21,6 +21,7 @@ touch $CONFIGS_DIR/setup.conf
 ( bash $SCRIPTS_DIR/presetup.sh )|& tee presetup.log
 arch-chroot /mnt 
 ( bash $SCRIPTS_DIR/setup.sh )|& tee setup.log
+( bash $SCRIPTS_DIR/services.sh )|& tee services.log
 
 cp -v *.log /mnt/home/$user_name
 
