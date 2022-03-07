@@ -8,18 +8,36 @@ echo -ne "
             Please select preset settings for your system              
 ------------------------------------------------------------------------
 "
-echo -ne "\n Please name your machine , this will be the host name: \n "
-read machine_name
-echo -ne "\n Please enter your username: \n"
-read user_name
-echo -ne "\n Please enter your password: \n"
-read -s password # read password without echo
-echo -ne "\n Please provide a username for accessing grub: \n"
-read grub_username
-echo -ne "\n Please provide a password for accessing grub: \n"
-read -s grub_password
-echo -ne "\n Please enter disk encryption password: \n"
-read -s luks_password
+
+echo -ne "
+Please name your machine , this will be the host name:
+"
+read MACHINE_NAME
+
+echo -ne "
+Please enter your username:
+"
+read USER_NAME
+
+echo -ne "
+Please enter your password:
+"
+read -s USER_PASSWORD # read password without echo
+
+echo -ne "
+Please enter grub username for accessing grub: 
+"
+read GRUB_USERNAME
+
+echo -ne "
+Please provide a password for accessing grub:
+"
+read -s GRUB_PASSWORD
+
+echo -ne "
+Please enter disk encryption password:
+"
+read -s LUKS_PASSWORD
 
 
 echo -ne "
@@ -43,10 +61,10 @@ n      # add new partition
        # default - last sector 
 t      # change partition type
 1      # partition number
-83     # Linux filesystem
+1    # Linux filesystem
 t      # change partition type
 2      # partition number
-83     # Linux filesystem
+20     # Linux filesystem
 w      # write partition table and exit
 FDISK_CMDS
 
