@@ -21,7 +21,6 @@ efibootmgr
 fail2ban
 firetools
 git
-grub-btrfs
 htop
 inetutils
 libb64
