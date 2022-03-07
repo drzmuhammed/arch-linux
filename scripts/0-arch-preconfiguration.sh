@@ -79,7 +79,7 @@ echo -ne "
 "
 
 mkfs.fat -F32 ${disk}1
-{echo -n "YES"} {echo -n "$LUKS_PASSWORD"} {echo -n "$LUKS_PASSWORD"} | cryptsetup -y -v luksFormat ${disk}2
+(echo -n "YES"; echo -n "$LUKS_PASSWORD"; echo -n "$LUKS_PASSWORD") | cryptsetup -y -v luksFormat ${disk}2
 echo -n "$LUKS_PASSWORD" | cryptsetup luksOpen ${disk}2 cryptedsda2
 mkfs.btrfs -f /dev/mapper/cryptedsda2
 
