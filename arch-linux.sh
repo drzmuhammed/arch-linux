@@ -18,6 +18,7 @@ set +a
 
 touch $CONFIGS_DIR/setup.conf
 ( bash $SCRIPTS_DIR/0-arch-preconfiguration.sh )|& tee 0-arch-preconfiguration.log
+cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
 arch-chroot /mnt 
 ( bash $SCRIPTS_DIR/1-arch-base-system.sh )|& tee 1-arch-base-system.log
 
