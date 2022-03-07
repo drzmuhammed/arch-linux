@@ -17,7 +17,7 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-pacman -S --needed - < $PACKAGES_DIR/pacman-base
+pacman -S --needed - < $PKGS_DIR/base-pacman
 
 echo -ne "
 
