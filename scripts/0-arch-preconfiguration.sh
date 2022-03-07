@@ -99,5 +99,8 @@ mkdir /mnt &>/dev/null # Hiding error message if any
 pacman -S archlinux-keyring
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap)
 
+cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
