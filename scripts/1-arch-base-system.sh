@@ -32,4 +32,4 @@ echo -ne "
 #grub-mkconfig -o /boot/grub/grub.cfg
 #sed
 #grub-mkconfig -o /boot/grub/grub.cfg
-exit
+
