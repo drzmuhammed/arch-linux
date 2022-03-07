@@ -116,17 +116,9 @@ echo -ne "
             Setting up pacman and arch core              
 ------------------------------------------------------------------------
 "
-sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacman -S --noconfirm reflector
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
-mkdir /mnt &>/dev/null # Hiding error message if any
 
 pacman -S --noconfirm archlinux-keyring
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap)
-
-cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
-cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
 echo -ne "
 ------------------------------------------------------------------------
