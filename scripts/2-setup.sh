@@ -141,6 +141,7 @@ configuring sudo rights
 "
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
+su $USERNAME
 echo -ne "
 -------------------------------------------------------------------------
             INSTALLING AUR HELPER
@@ -156,3 +157,4 @@ else
   echo "aur helper not installed because you havent selected any" 
 fi
 
+$PASSWORD | su
