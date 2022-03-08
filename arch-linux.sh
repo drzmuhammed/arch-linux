@@ -19,8 +19,7 @@ set +a
 
 touch $CONFIGS_DIR/setup.conf
 ( bash $SCRIPTS_DIR/presetup.sh )|& tee presetup.log
-arch-chroot /mnt 
-( bash $SCRIPTS_DIR/setup.sh )|& tee setup.log
+( arch-chroot /mnt $HOME/arch-linux/scripts/setup.sh )|& tee setup.log
 
 cp -v *.log /mnt/home/$user_name
 
