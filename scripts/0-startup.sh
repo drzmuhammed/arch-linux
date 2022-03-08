@@ -179,8 +179,8 @@ case ${options[$?]} in
     set_option MOUNT_OPTIONS_1 "noatime,compress=zstd:1,ssd,space_cache=v2,discard=async";;
     set_option MOUNT_OPTIONS_2 "noatime,compress=none,ssd,space_cache=v2,discard=async";;
     n|N|no|NO|No)
-    set_option MOUNT_OPTIONS_1 "noatime,compress=zstd,commit=120";;
-    set_option MOUNT_OPTIONS_2 "noatime,compress=zstd,commit=120";;
+    set_option MOUNT_OPTIONS_1 "noatime,compress=zstd:1";;
+    set_option MOUNT_OPTIONS_2 "noatime,compress=none";;
 
     *) echo "Wrong option. Try again";drivessd;;
 esac
