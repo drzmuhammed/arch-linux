@@ -78,7 +78,7 @@ echo -ne "
 "
 touch /swap/swapfile
 truncate -s 0 /swap/swapfile
-chattr +C /swap
+chattr +C /swap/swapfile
 btrfs property set /swap/swapfile compression none
 dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
 mkswap /swap/swapfile
