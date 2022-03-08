@@ -21,7 +21,7 @@ touch $CONFIGS_DIR/setup.conf
 ( bash $SCRIPTS_DIR/presetup.sh )|& tee presetup.log
 ( arch-chroot /mnt $HOME/als/scripts/setup.sh )|& tee setup.log
 
-cp -v *.log /mnt/home/$user_name
+cp -v *.log /mnt/root/als
 
 echo -ne "
 -------------------------------------------------------------------------
