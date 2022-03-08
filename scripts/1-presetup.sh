@@ -73,15 +73,15 @@ btrfs subvolume create /mnt/@.snapshots
 
 umount /mnt
 
-mount -o ${MOUNT_OPTIONS_1},subvol=@ /dev/mapper/cryptedsda2 /mnt
+mount -o noatime,compress=zstd:1,ssd,space_cache=v2,discard=async,subvol=@ /dev/mapper/cryptedsda2 /mnt
 
 mkdir /mnt/{home,swap,var,tmp,boot,.snapshots}
 
-mount -o ${MOUNT_OPTIONS_1},subvol=@home /dev/mapper/cryptedsda2 /mnt/home
-mount -o ${MOUNT_OPTIONS_2},subvol=@var /dev/mapper/cryptedsda2 /mnt/var
-mount -o ${MOUNT_OPTIONS_2},subvol=@swap /dev/mapper/cryptedsda2 /mnt/swap
-mount -o ${MOUNT_OPTIONS_2},subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
-mount -o ${MOUNT_OPTIONS_2},subvol=@.snapshots /dev/mapper/cryptedsda2 /mnt/.snapshots
+mount -o noatime,compress=zstd:1,ssd,space_cache=v2,discard=async,subvol=@home /dev/mapper/cryptedsda2 /mnt/home
+mount -o noatime,compress=none,ssd,space_cache=v2,discard=async,subvol=@var /dev/mapper/cryptedsda2 /mnt/var
+mount -o noatime,compress=none,ssd,space_cache=v2,discard=async,subvol=@swap /dev/mapper/cryptedsda2 /mnt/swap
+mount -o noatime,compress=none,ssd,space_cache=v2,discard=async,subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
+mount -o noatime,compress=none,ssd,space_cache=v2,discard=async,subvol=@.snapshots /dev/mapper/cryptedsda2 /mnt/.snapshots
 mount ${disk}1 /mnt/boot
 
 if ! grep -qs '/mnt' /proc/mounts; then
