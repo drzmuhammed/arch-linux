@@ -17,10 +17,11 @@ CONFIGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 PKGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/pkgs
 set +a
 
-touch $CONFIGS_DIR/setup.conf
-( bash $SCRIPTS_DIR/presetup.sh )|& tee presetup.log
+( bash $SCRIPTS_DIR/0-startup.sh.sh )|& tee 0-startup.log
+( bash $SCRIPTS_DIR/1-presetup.sh )|& tee 1-presetup.log
 source $CONFIGS_DIR/setup.conf
-( arch-chroot /mnt $HOME/arch-linux/scripts/setup.sh )|& tee setup.log
+( arch-chroot /mnt $HOME/arch-linux/scripts/2-setup.sh )|& tee 2-setup.log
+umount -a
 
 cp -v *.log /mnt/root/arch-linux
 
