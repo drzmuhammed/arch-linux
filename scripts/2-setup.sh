@@ -73,8 +73,10 @@ setting language and keyboard layout
 echo -ne "LANG=en_US.UTF-8" >> /etc/locale.conf
 echo -ne "us" >> /etc/vconsole.conf
 
-echo -n "${ROOT_PASSWORD}" | passwd
-
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << PASSWD_CMDS  | passwd
+${ROOT_PASSWORD}
+${ROOT_PASSWORD}
+PASSWD_CMDS
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -91,16 +93,16 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
-cd swap
-touch swapfile
-truncate -s 0 ./swapfile
-chattr +C ./swapfile
-btrfs property set ./swapfile compression none
-dd if=/dev/zero of=/swapfile bs=1M count=8192
-mkswap /swapfile
-chmod 640 /swapfile
-swapon /swapfile
-cd
+
+touch /swap/swapfile
+truncate -s 0 /swap/swapfile
+chattr +C /swap/swapfile
+btrfs property set /swap/swapfile compression none
+dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
+chmod 600 /swap/swapfile
+mkswap /swap/swapfile
+swapon /swap/swapfile
+
 echo -ne "/swap/swapfile none swap defaults 0 0" >> /etc/fstab
 
 echo -ne "
@@ -165,15 +167,16 @@ if [ $(whoami) = "root"  ]; then
     echo "$USERNAME:$PASSWORD" | chpasswd
     echo "$USERNAME password set"
 
-	cp -R $HOME/arch-linux /home/$USERNAME/
+    cp -R $HOME/arch-linux /home/$USERNAME/
     chown -R $USERNAME: /home/$USERNAME/arch-linux
     echo "arch-linux copied to home directory"
 
 # enter $NAME_OF_MACHINE to /etc/hostname
 	echo $NAME_OF_MACHINE > /etc/hostname
 else
-	echo "You are already a user proceed with aur installs"
+	echo "You are already a user proceed with  installs"
 fi
+
 echo -ne "127.0.0.1 localhost" >> /etc/hosts
 echo -ne "::1       localhost" >> /etc/hosts
 echo -ne "127.0.1.1 $NAME_OF_MACHINE.localdomain $NAME_OF_MACHINE" >> /etc/hosts
