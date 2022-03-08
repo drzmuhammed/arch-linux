@@ -94,24 +94,6 @@ enabling  ufw.service
 "
 systemctl enable --now ufw
 
-su $USERNAME
-echo -ne "
--------------------------------------------------------------------------
-            INSTALLING AUR HELPER
--------------------------------------------------------------------------
-"
-if [[ ! $AUR_HELPER == none ]]; then
-  cd ~
-  git clone "https://aur.archlinux.org/$AUR_HELPER.git"
-  cd ~/$AUR_HELPER
-  makepkg -si --noconfirm
-  $AUR_HELPER -S --noconfirm --needed $(cat $PKGS_DIR/base-aur)
-else
-  echo "aur helper not installed because you havent selected any" 
-fi
-
-$PASSWORD | su
-
 echo -ne "
 -------------------------------------------------------------------------
             Creating Snapper Config
