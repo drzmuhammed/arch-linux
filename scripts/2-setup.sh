@@ -52,13 +52,13 @@ fi
 echo -ne "
 setting up place and local time
 "
-ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+ln -sf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime
 
 echo -ne "
 syncing harware clock
 "
 hwclock --systohc
-timedatectl --no-ask-password set-timezone ${TIMEZONE}
+timedatectl --no-ask-password set-timezone ${TIME_ZONE}
 timedatectl --no-ask-password set-ntp 1
 
 echo -ne "
@@ -73,7 +73,7 @@ setting language and keyboard layout
 echo -ne "LANG=en_US.UTF-8" >> /etc/locale.conf
 echo -ne "us" >> /etc/vconsole.conf
 
-echo -n "${ROOTPASSWORD}" | passwd
+echo -n "${ROOT_PASSWORD}" | passwd
 
 
 echo -ne "
