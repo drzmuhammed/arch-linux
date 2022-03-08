@@ -20,7 +20,7 @@ set +a
 touch $CONFIGS_DIR/setup.conf
 ( bash $SCRIPTS_DIR/presetup.sh )|& tee presetup.log
 arch-chroot /mnt
-( bash $HOME/aarch-linux/scripts/setup.sh )|& tee setup.log
+( bash $HOME/arch-linux/scripts/setup.sh )|& tee setup.log
 
 cp -v *.log /mnt/root/arch-linux
 
