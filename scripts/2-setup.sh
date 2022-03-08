@@ -71,8 +71,6 @@ sed -i 's/^MODULES=()/MODULES=(btrfs)/' /etc/mkinitcpio.conf
 sed -i 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems resume fsck)/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
-grub-mkconfig -o /boot/grub/grub.cfg
-ENCRYPTED_PARTITION_UUID=$(cat setup.conf)
 sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:cryptedsda2 root=/dev/mapper/cryptedsda2 %g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 mkinitcpio -p linux
@@ -185,94 +183,16 @@ sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 echo -ne "
 -------------------------------------------------------------------------
-            CONFIGURING UFW FIREWALL
+            INSTALLING AUR HELPER
 -------------------------------------------------------------------------
+"
+if [[ ! $AUR_HELPER == none ]]; then
+  cd ~
+  git clone "https://aur.archlinux.org/$AUR_HELPER.git"
+  cd ~/$AUR_HELPER
+  makepkg -si --noconfirm
+  $AUR_HELPER -S --noconfirm --needed $(cat $PKGS_DIR/base-aur)
+else
+  echo "aur helper not installed because you havent selected any" 
+fi
 
-"
-ufw disable
-ufw default deny incoming
-ufw default allow outgoing
-ufw allow 853/tcp
-ufw allow 853/udp
-ufw allow 443/tcp
-ufw allow 443/udp
-ufw enable
-
-echo -ne "
--------------------------------------------------------------------------
-            Enabling Essential Services
--------------------------------------------------------------------------
-
-"
-echo -ne "
-enabling acpid.service
-"
-systemctl enable --now acpid
-echo -ne "
-enabling  apparmor.service
-"
-systemctl enable --now apparmor
-echo -ne " 
-enabling  auditd.service
-"
-systemctl enable --now auditd
-echo -ne "
-enabling  bluetooth.service
-"
-systemctl enable --now bluetooth
-echo -ne "
-enabling  cpupower.service
-"
-systemctl enable --now cpupower
-
-echo -ne "
-enabling  fail2ban.service
-"
-systemctl enable --now fail2ban
-
-echo -ne "  
-enabling  fstrim.timer
-"
-systemctl enable fstrim.timer
-
-echo -ne "  
-enabling  NetworkManager.service
-"
-systemctl enable --now NetworkManager
-
-echo -ne "  
-enabling reflector.timer
-"
-systemctl enable --now reflector.timer
-
-echo -ne "  
-enabling systemd-remount-fs.service
-"
-systemctl enable --now systemd-remount-fs
-
-echo -ne "  
-enabling  systemd-resolved.service
-"
-systemctl enable --now systemd-resolved
-
-echo -ne "  
-enabling  systemd-timesyncd.service
-"
-systemctl enable --now systemd-timesyncd
-
-echo -ne "  
-enabling  thermald.service
-"
-systemctl enable --now thermald
-
-echo -ne "  
-enabling  tlp.service
-"
-systemctl enable --now tlp
-
-echo -ne "  
-enabling  ufw.service
-"
-systemctl enable --now ufw
-
-umount -a
