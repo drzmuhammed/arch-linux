@@ -76,14 +76,17 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
+
 touch /swap/swapfile
-truncate -s 0 /swap/swapfile
-chattr +C /swap/swapfile
-btrfs property set /swap/swapfile compression none
-dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
-mkswap /swap/swapfile
-chmod 600 /swap/swapfile
-swapon /swap/swapfile
+cd /swap
+truncate -s 0 ./swapfile
+chattr +C ./swapfile
+btrfs property set ./swapfile compression none
+dd if=/dev/zero of=/swapfile bs=1M count=8192
+mkswap /swapfile
+chmod 600 /swapfile
+swapon /swapfile
+cd
 echo -ne "/swap/swapfile none swap defaults 0 0" >> /etc/fstab
 
 echo -ne "
