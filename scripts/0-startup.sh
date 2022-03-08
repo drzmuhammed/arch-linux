@@ -130,6 +130,14 @@ select_option() {
     return $(( $active_col + $active_row * $colmax ))
 }
 
+logo () {
+echo -ne "
+-------------------------------------------------------------------------
+        PLEASE SELECT PRESETUP SETTINGS FOR YOUR SYSTEM              
+------------------------------------------------------------------------
+"
+}
+
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
 time_zone="$(curl --fail https://ipapi.co/timezone)"
@@ -216,7 +224,17 @@ aurhelper () {
   set_option AUR_HELPER $aur_helper
 }
 
+# Starting functions
 clear
+logo
+userinfo
+clear
+logo
+aurhelper
+clear
+logo
 timezone
 clear
+logo
 keymap
+
