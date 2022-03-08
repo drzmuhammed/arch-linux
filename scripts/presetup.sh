@@ -2,7 +2,7 @@
 
 echo -ne "
 ------------------------------------------------------------------------
-            Please select preset settings for your system              
+            PREPARING THE SYSTEM              
 ------------------------------------------------------------------------
 "
 timedatectl set-ntp true
@@ -10,7 +10,7 @@ loadkeys us
 
 echo -ne "
 -------------------------------------------------------------------------
-                    formating disk
+            FORMATTING THE DISK
 -------------------------------------------------------------------------
 
 "
@@ -39,7 +39,7 @@ FDISK_CMDS
 echo -ne "
 
 -------------------------------------------------------------------------
-                    creating filesystems
+            CREATING LUKS BTRFS FILE SYSTEM
 -------------------------------------------------------------------------
 
 "
@@ -76,7 +76,7 @@ mount ${disk}1 /mnt/boot
 
 echo -ne "
 ------------------------------------------------------------------------
-            Setting up pacman and arch core              
+            INSTALLLING BARE METAL ARCH PACKAGES            
 ------------------------------------------------------------------------
 "
 
@@ -86,7 +86,7 @@ cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
 
 echo -ne "
 ------------------------------------------------------------------------
-            Setting up filesystem table             
+SETTING UP FILE SYSTEM TABLES         
 ------------------------------------------------------------------------
 "
 genfstab -U /mnt >> /mnt/etc/fstab
