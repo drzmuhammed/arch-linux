@@ -5,8 +5,18 @@ echo -ne "
             PREPARING THE SYSTEM              
 ------------------------------------------------------------------------
 "
-timedatectl set-ntp true
 loadkeys us
+source $CONFIGS_DIR/setup.conf
+iso=$(curl -4 ifconfig.co/country-iso)
+timedatectl set-ntp true
+pacman -S --noconfirm archlinux-keyring #update keyrings to latest to prevent packages failing to install
+pacman -S --noconfirm --needed pacman-contrib
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+pacman -S --noconfirm --needed reflector rsync grub
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+
+reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+mkdir /mnt &>/dev/null # Hiding error message if any
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -59,20 +69,28 @@ btrfs subvolume create /mnt/@home
 btrfs subvolume create /mnt/@swap
 btrfs subvolume create /mnt/@var
 btrfs subvolume create /mnt/@tmp
-btrfs subvolume create /mnt/@snapshots
+btrfs subvolume create /mnt/@.snapshots
 
 umount /mnt
 
-mount -o noatime,compress=zstd:1,space_cache=v2,discard=async,subvol=@ /dev/mapper/cryptedsda2 /mnt
+mount -o ${MOUNT_OPTIONS_1},subvol=@ /dev/mapper/cryptedsda2 /mnt
 
-mkdir /mnt/{home,swap,var,tmp,boot,snapshots}
+mkdir /mnt/{home,swap,var,tmp,boot,.snapshots}
 
-mount -o noatime,compress=zstd:1,space_cache=v2,discard=async,subvol=@home /dev/mapper/cryptedsda2 /mnt/home
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@var /dev/mapper/cryptedsda2 /mnt/var
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@swap /dev/mapper/cryptedsda2 /mnt/swap
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
-mount -o noatime,compress=none,space_cache=v2,discard=async,subvol=@snapshots /dev/mapper/cryptedsda2 /mnt/snapshots
+mount -o ${MOUNT_OPTIONS_1},subvol=@home /dev/mapper/cryptedsda2 /mnt/home
+mount -o ${MOUNT_OPTIONS_2},subvol=@var /dev/mapper/cryptedsda2 /mnt/var
+mount -o ${MOUNT_OPTIONS_2},subvol=@swap /dev/mapper/cryptedsda2 /mnt/swap
+mount -o ${MOUNT_OPTIONS_2},subvol=@tmp /dev/mapper/cryptedsda2 /mnt/tmp
+mount -o ${MOUNT_OPTIONS_2},subvol=@.snapshots /dev/mapper/cryptedsda2 /mnt/.snapshots
 mount ${disk}1 /mnt/boot
+
+if ! grep -qs '/mnt' /proc/mounts; then
+    echo "Drive is not mounted can not continue"
+    echo "Rebooting in 3 Seconds ..." && sleep 1
+    echo "Rebooting in 2 Seconds ..." && sleep 1
+    echo "Rebooting in 1 Second ..." && sleep 1
+    reboot now
+fi 
 
 echo -ne "
 ------------------------------------------------------------------------
@@ -80,9 +98,9 @@ echo -ne "
 ------------------------------------------------------------------------
 "
 
-pacman -S --noconfirm --needed archlinux-keyring
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap) --noconfirm --needed
 cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
 echo -ne "
 ------------------------------------------------------------------------
