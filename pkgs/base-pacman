@@ -17,7 +17,6 @@ cups
 dialog
 dnssec-tools
 dosfstools
-efibootmgr
 fail2ban
 firetools
 git
