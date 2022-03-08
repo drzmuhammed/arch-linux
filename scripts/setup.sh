@@ -1,48 +1,31 @@
 #!/usr/bin/env bash
 
-source $HOME/als/configs/setup.conf
+source $HOME/arch-linux/configs/setup.conf
 
 echo -ne "
-
--------------------------------------------------------------------------
-                setting place and local time
--------------------------------------------------------------------------
-
+setting up place and local time
 "
 ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
 
 echo -ne "
-
--------------------------------------------------------------------------
-                syncing harware clock
--------------------------------------------------------------------------
-
+syncing harware clock
 "
 hwclock --systohc
+
 echo -ne "
-
--------------------------------------------------------------------------
-               generating locale
--------------------------------------------------------------------------
-
+generating locale
 "
 sed 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 echo -ne "
 
--------------------------------------------------------------------------
-               setting language and keyboard layout
--------------------------------------------------------------------------
-
+setting language and keyboard layout
 "
 echo -ne "LANG=en_US.UTF-8" >> /etc/locale.conf
 echo -ne "us" >> /etc/vconsole.conf
+
 echo -ne "
-
--------------------------------------------------------------------------
-               setting machine name and hostname
--------------------------------------------------------------------------
-
+setting machine name and hostname
 "
 echo -ne "${machine_name}" >> /etc/hostname
 echo -ne "127.0.0.1 localhost" >> /etc/hosts
@@ -52,28 +35,27 @@ echo -ne "127.0.1.1 ${machine_name}.localdomain ${machine_name}" >> /etc/hosts
 echo -ne "
 
 -------------------------------------------------------------------------
-               set root password
+            SET SYSTEM ROOT PASSWORD
 -------------------------------------------------------------------------
 
 "
 passwd
 
-
 echo -ne "
 
 -------------------------------------------------------------------------
-             installing core linux packages
+            INSTALLING ARCH LINUX CORE PACKAGES
 -------------------------------------------------------------------------
 
 "
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -Sy --noconfirm --needed
-pacman -S --noconfirm --needed - < $PKGS_DIR/base-pacman
+pacman -S --noconfirm --needed $(cat $PKGS_DIR/base-pacman)
 
 echo -ne "
 
 -------------------------------------------------------------------------
-             installing and configuring grub
+            SETTING UP GRUB
 -------------------------------------------------------------------------
 
 "
@@ -90,23 +72,23 @@ mkinitcpio -p linux
 echo -ne "
 
 -------------------------------------------------------------------------
-                            configuring swap
+            SETTING UP ENCRYPTED SWAP
 -------------------------------------------------------------------------
 
 "
-touch swap/swapfile
-truncate -s 0 ./swap/swapfile
-chattr +C ./swap/swapfile
-btrfs property set ./swap/swapfile compression none
+touch /swap/swapfile
+truncate -s 0 /swap/swapfile
+chattr +C /swap
+btrfs property set /swap/swapfile compression none
 dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
 mkswap /swap/swapfile
 chmod 600 /swap/swapfile
-swapon /swap/swapfile lo
+swapon /swap/swapfile
 echo -ne "/swap/swapfile none swap defaults 0 0" >> /etc/fstab
 
 echo -ne "
 -------------------------------------------------------------------------
-                            configuring firewall
+            CONFIGURING UFW FIREWALL
 -------------------------------------------------------------------------
 
 "
@@ -121,7 +103,7 @@ ufw enable
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Enabling Essential Services
+            Enabling Essential Services
 -------------------------------------------------------------------------
 
 "
