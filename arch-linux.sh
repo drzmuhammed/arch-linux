@@ -19,20 +19,12 @@ set +a
 ( bash $SCRIPTS_DIR/1-presetup.sh )|& tee 1-presetup.log
 source $CONFIGS_DIR/setup.conf
 ( arch-chroot /mnt $HOME/arch-linux/scripts/2-setup.sh )|& tee 2-setup.log
-cp -v *.log /mnt/root/arch-linux
+( arch-chroot /mnt $HOME/arch-linux/scripts/3-postsetup.sh )|& tee 3-postsetup.log
+
+cp -v *.log /mnt/home/$USERNAME
 
 echo -ne "
 -------------------------------------------------------------------------
-            AUTOMATED ARCH LINUX INSTALLER
--------------------------------------------------------------------------
-            ARCH INSTALLATION COMPLETE AND READY TO USE
+            PLEASE EJECT INSTALL MEDIA AND REBOOT
 -------------------------------------------------------------------------
 "
-echo -ne "
-unmounting all file system
-"
-umount -a
-echo -ne "
-rebooting now
-"
-reboot
