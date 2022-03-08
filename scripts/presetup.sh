@@ -82,7 +82,7 @@ echo -ne "
 
 pacman -S --noconfirm --needed archlinux-keyring
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap) --noconfirm --needed
-cp -R ${SCRIPT_DIR} /mnt/root/als
+cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
 
 echo -ne "
 ------------------------------------------------------------------------
