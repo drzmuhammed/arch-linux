@@ -151,12 +151,12 @@ select_option $? 1 "${options[@]}"
 case ${options[$?]} in
     y|Y|yes|Yes|YES)
     echo "${time_zone} set as timezone"
-    set_option TIMEZONE $time_zone;;
+    set_option TIME_ZONE $time_zone;;
     n|N|no|NO|No)
     echo "Please enter your desired timezone e.g. Europe/London :" 
     read new_timezone
     echo "${new_timezone} set as timezone"
-    set_option TIMEZONE $new_timezone;;
+    set_option TIME_ZONE $new_timezone;;
     *) echo "Wrong option. Try again";timezone;;
 esac
 }
@@ -196,21 +196,21 @@ done
 
 rootpassword () {
   echo -ne "Please set root password: \n"
-  read -s rootpassword # read password without echo
+  read -s root_password # read password without echo
 
   echo -ne "Please repeat your root password: \n"
-  read -s rootpassword2 # read password without echo
+  read -s root_password2 # read password without echo
 
-  if [ "$password" = "$password2" ]; then
-    set_option ROOTPASSWORD $rootpassword
+  if [ "$root_password" = "$root_password2" ]; then
+    set_option ROOT_PASSWORD $root_password
   else
     echo -e "\nPasswords do not match. Please try again. \n"
   fi
 }
 
 hostname () {
-read -rep "Please enter your hostname: " nameofmachine
-set_option NAME_OF_MACHINE $nameofmachine
+read -rep "Please enter your machine/host name: " name_of_machine
+set_option NAME_OF_MACHINE $name_of_machine
 }
 
 luks () {
