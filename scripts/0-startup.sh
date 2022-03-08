@@ -192,6 +192,23 @@ while true; do
     echo -e "\nPasswords do not match. Please try again. \n"
   fi
 done
+}
+
+rootpassword () {
+  echo -ne "Please set root password: \n"
+  read -s rootpassword # read password without echo
+
+  echo -ne "Please repeat your root password: \n"
+  read -s rootpassword2 # read password without echo
+
+  if [ "$password" = "$password2" ]; then
+    set_option ROOTPASSWORD $rootpassword
+  else
+    echo -e "\nPasswords do not match. Please try again. \n"
+  fi
+}
+
+hostname () {
 read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
@@ -222,10 +239,16 @@ aurhelper () {
 # Starting functions
 clear
 logo
-userinfo
+hostname
 clear
 logo
 luks
+clear
+logo
+rootpassword
+clear
+logo
+userinfo
 clear
 logo
 aurhelper
@@ -235,4 +258,51 @@ timezone
 clear
 logo
 keymap
+clear
 
+#SAVING SETUP PARAMETERS
+if ! source $HOME/arch-linux/configs/setup.conf; then
+	# Loop through user input until the user gives a valid username
+	while true
+	do 
+		read -p "Please enter username:" username
+		# username regex per response here https://unix.stackexchange.com/questions/157426/what-is-the-regex-to-validate-linux-users
+		# lowercase the username to test regex
+		if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
+		then 
+			break
+		fi 
+		echo "Incorrect username."
+	done 
+
+    # Loop through user input until the user gives a valid hostname, but allow the user to force save 
+	while true
+	do 
+		read -p "Please name your machine:" name_of_machine
+		# hostname regex (!!couldn't find spec for computer name!!)
+		if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
+		then 
+			break 
+		fi 
+		# if validation fails allow the user to force saving of the hostname
+		read -p "Hostname doesn't seem correct. Do you still want to save it? (y/n)" force 
+		if [[ "${force,,}" = "y" ]]
+		then 
+			break 
+		fi 
+	done 
+
+    echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/arch-linux/configs/setup.conf
+    # convert name to lowercase before saving to setup.conf
+    echo "username=${username,,}" >> ${HOME}/arch-linux/configs/setup.conf
+    #Set luks Password
+    read -p "Please enter password:" password
+    echo "password=${password,,}" >> ${HOME}/arch-linux/configs/setup.conf
+    #Set root Password
+    read -p "Please enter password:" password
+    echo "password=${password,,}" >> ${HOME}/arch-linux/configs/setup.conf
+    # Set user Password
+    read -p "Please enter password:" password
+    echo "password=${password,,}" >> ${HOME}/arch-linux/configs/setup.conf
+
+fi
