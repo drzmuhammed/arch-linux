@@ -16,8 +16,8 @@ PKGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/
 set +a
 
 ( bash $SCRIPTS_DIR/0-startup.sh )|& tee 0-startup.log
-( bash $SCRIPTS_DIR/1-presetup.sh )|& tee 1-presetup.log
 source $CONFIGS_DIR/setup.conf
+( bash $SCRIPTS_DIR/1-presetup.sh )|& tee 1-presetup.log
 ( arch-chroot /mnt $HOME/arch-linux/scripts/2-setup.sh )|& tee 2-setup.log
 ( arch-chroot /mnt $HOME/arch-linux/scripts/3-postsetup.sh )|& tee 3-postsetup.log
 
