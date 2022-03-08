@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+source $HOME/arch-linux/configs/setup.conf
+
 echo -ne "
 
 -------------------------------------------------------------------------
@@ -125,46 +128,73 @@ echo -ne "
 echo -ne "
 enabling acpid.service
 "
-systemctl enable acpid
+systemctl enable --now acpid
 echo -ne "
 enabling  apparmor.service
 "
-systemctl enable apparmor
+systemctl enable --now apparmor
 echo -ne " 
 enabling  auditd.service
 "
-systemctl enable auditd
+systemctl enable --now auditd
 echo -ne "
 enabling  bluetooth.service
 "
-systemctl enable bluetooth
+systemctl enable --now bluetooth
 echo -ne "
 enabling  cpupower.service
 "
-systemctl enable cpupower
+systemctl enable --now cpupower
 
 echo -ne "
 enabling  fail2ban.service
 "
-systemctl enable fail2ban
+systemctl enable --now fail2ban
+
+echo -ne "  
+enabling  fstrim.timer
+"
 systemctl enable fstrim.timer
-echo -ne "  enabling  fstrim.timer"
-systemctl enable NetworkManager
-echo -ne "  enabling  NetworkManager.service"
-systemctl enable reflector.timer
-echo -ne "  enabling reflector.timer"
-systemctl enable systemd-remount-fs
-echo -ne "  enabling systemd-remount-fs.service"
-systemctl enable systemd-resolved
-echo -ne "  enabling  systemd-resolved.service"
-systemctl enable systemd-timesyncd
-echo -ne "  enabling  systemd-timesyncd.service"
-systemctl enable thermald
-echo -ne "  enabling  thermald.service"
-systemctl enable tlp
-echo -ne "  enabling  tlp.service"
-systemctl enable ufw
-echo -ne "  enabling  ufw.service"
+
+echo -ne "  
+enabling  NetworkManager.service
+"
+systemctl enable --now NetworkManager
+
+echo -ne "  
+enabling reflector.timer
+"
+systemctl enable --now reflector.timer
+
+echo -ne "  
+enabling systemd-remount-fs.service
+"
+systemctl enable --now systemd-remount-fs
+
+echo -ne "  
+enabling  systemd-resolved.service
+"
+systemctl enable --now systemd-resolved
+
+echo -ne "  
+enabling  systemd-timesyncd.service
+"
+systemctl enable --now systemd-timesyncd
+
+echo -ne "  
+enabling  thermald.service
+"
+systemctl enable --now thermald
+
+echo -ne "  
+enabling  tlp.service
+"
+systemctl enable --now tlp
+
+echo -ne "  
+enabling  ufw.service
+"
+systemctl enable --now ufw
 
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
