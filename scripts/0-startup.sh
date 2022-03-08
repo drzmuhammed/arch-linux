@@ -5,7 +5,7 @@
 
 # set up a config file
 echo -ne "
-SETTING UP A CONFIG FILE
+setting up config file
 "
 CONFIG_FILE=$CONFIGS_DIR/setup.conf
 if [ ! -f $CONFIG_FILE ]; then # check if file exists
