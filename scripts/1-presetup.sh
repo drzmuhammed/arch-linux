@@ -100,6 +100,7 @@ echo -ne "
 
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap) --noconfirm --needed
 cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
+chown root /mnt/root/arch-linux/scripts/2-setup.sh /mnt/root/arch-linux/scripts/3-postsetup.sh
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
 echo -ne "
