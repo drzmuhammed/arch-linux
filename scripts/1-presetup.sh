@@ -55,8 +55,8 @@ echo -ne "
 "
 
 mkfs.fat -F32 ${disk}1
-cryptsetup -y -v luksFormat ${disk}2
-cryptsetup luksOpen ${disk}2 cryptedsda2
+echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat ${disk}2
+echo -n "${LUKS_PASSWORD}" | cryptsetup luksOpen ${disk}2 cryptedsda2
 mkfs.btrfs -f /dev/mapper/cryptedsda2
 
 # store uuid of encrypted partition for grub
