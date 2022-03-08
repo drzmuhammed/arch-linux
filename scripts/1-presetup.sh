@@ -20,7 +20,7 @@ mkdir /mnt &>/dev/null # Hiding error message if any
 
 echo -ne "
 -------------------------------------------------------------------------
-            FORMATTING THE DISK
+            FORMATING THE DISK
 -------------------------------------------------------------------------
 
 "
