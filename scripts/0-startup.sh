@@ -174,25 +174,6 @@ echo -ne "Your key boards layout: ${keymap} \n"
 set_option KEYMAP $keymap
 }
 
-drivessd () {
-echo -ne "
-Is this an ssd? yes/no:
-"
-
-options=("Yes" "No")
-select_option $? 1 "${options[@]}"
-
-case ${options[$?]} in
-    y|Y|yes|Yes|YES)
-    set_option MOUNT_OPTIONS_1 "noatime,compress=zstd:1,ssd,space_cache=v2,discard=async";;
-    set_option MOUNT_OPTIONS_2 "noatime,compress=none,ssd,space_cache=v2,discard=async";;
-    n|N|no|NO|No)
-    set_option MOUNT_OPTIONS_1 "noatime,compress=zstd:1";;
-    set_option MOUNT_OPTIONS_2 "noatime,compress=none";;
-
-    *) echo "Wrong option. Try again";drivessd;;
-esac
-}
 
 userinfo () {
 read -p "Please enter your username: " username
@@ -215,6 +196,20 @@ read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
 
+luks () {
+  echo -ne "Please enter your luks password: \n"
+  read -s luks_password # read password without echo
+
+  echo -ne "Please repeat your luks password: \n"
+  read -s luks_password2 # read password without echo
+
+  if [ "$luks_password" = "$luks_password2" ]; then
+    set_option LUKS_PASSWORD $luks_password
+  else
+    echo -e "\nPasswords do not match. Please try again. \n"
+  fi
+}
+
 aurhelper () {
   # Let the user choose AUR helper from predefined list
   echo -ne "Please enter your desired AUR helper:\n"
@@ -228,6 +223,9 @@ aurhelper () {
 clear
 logo
 userinfo
+clear
+logo
+luks
 clear
 logo
 aurhelper
