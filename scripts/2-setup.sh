@@ -17,7 +17,7 @@ timedatectl --no-ask-password set-ntp 1
 echo -ne "
 generating locale
 "
-sed 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 
 echo -ne "
@@ -56,7 +56,7 @@ chattr +C ./swapfile
 btrfs property set ./swapfile compression none
 dd if=/dev/zero of=/swapfile bs=1M count=8192
 mkswap /swapfile
-chmod 600 /swapfile
+chmod 640 /swapfile
 swapon /swapfile
 cd
 echo -ne "/swap/swapfile none swap defaults 0 0" >> /etc/fstab
@@ -102,54 +102,14 @@ echo -ne "
 gpu_type=$(lspci)
 if grep -E "NVIDIA|GeForce" <<< ${gpu_type}; then
     pacman -S --noconfirm --needed nvidia
-	nvidia-xconfig
 elif lspci | grep 'VGA' | grep -E "Radeon|AMD"; then
     pacman -S --noconfirm --needed xf86-video-amdgpu
 elif grep -E "Integrated Graphics Controller" <<< ${gpu_type}; then
     pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
 elif grep -E "Intel Corporation UHD" <<< ${gpu_type}; then
-    pacman -S --needed --noconfirm libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
+    pacman -S --needed --noconfirm mesa vulkan-intel
 fi
-#SETUP IS WRONG THIS IS RUN
-if ! source $HOME/arch-linux/configs/setup.conf; then
-	# Loop through user input until the user gives a valid username
-	while true
-	do 
-		read -p "Please enter username:" username
-		# username regex per response here https://unix.stackexchange.com/questions/157426/what-is-the-regex-to-validate-linux-users
-		# lowercase the username to test regex
-		if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
-		then 
-			break
-		fi 
-		echo "Incorrect username."
-	done 
-# convert name to lowercase before saving to setup.conf
-echo "username=${username,,}" >> ${HOME}/arch-linux/configs/setup.conf
-
-    #Set Password
-    read -p "Please enter password:" password
-echo "password=${password,,}" >> ${HOME}/arch-linux/configs/setup.conf
-
-    # Loop through user input until the user gives a valid hostname, but allow the user to force save 
-	while true
-	do 
-		read -p "Please name your machine:" name_of_machine
-		# hostname regex (!!couldn't find spec for computer name!!)
-		if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
-		then 
-			break 
-		fi 
-		# if validation fails allow the user to force saving of the hostname
-		read -p "Hostname doesn't seem correct. Do you still want to save it? (y/n)" force 
-		if [[ "${force,,}" = "y" ]]
-		then 
-			break 
-		fi 
-	done 
-
-    echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/arch-linux/configs/setup.conf
-fi
+    
 echo -ne"
 -------------------------------------------------------------------------
                     Adding User
@@ -163,8 +123,8 @@ if [ $(whoami) = "root"  ]; then
     echo "$USERNAME:$PASSWORD" | chpasswd
     echo "$USERNAME password set"
 
-	cp -R $HOME/ArchTitus /home/$USERNAME/
-    chown -R $USERNAME: /home/$USERNAME/ArchTitus
+	cp -R $HOME/arch-linux /home/$USERNAME/
+    chown -R $USERNAME: /home/$USERNAME/arch-linux
     echo "arch-linux copied to home directory"
 
 # enter $NAME_OF_MACHINE to /etc/hostname
