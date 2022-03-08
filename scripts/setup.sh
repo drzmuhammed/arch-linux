@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source $HOME/arch-linux/configs/setup.conf
+source $HOME/als/configs/setup.conf
 
 echo -ne "
 
@@ -77,8 +77,8 @@ echo -ne "
 -------------------------------------------------------------------------
 
 "
-sed 's/^MODULES=()/MODULES=(btrfs)/' /etc/mkinitcpio.conf
-sed 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems resume fsck)/' /etc/mkinitcpio.conf
+sed -i 's/^MODULES=()/MODULES=(btrfs)/' /etc/mkinitcpio.conf
+sed -i 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems resume fsck)/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
