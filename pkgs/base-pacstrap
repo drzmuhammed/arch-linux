@@ -5,5 +5,4 @@ grub
 grub-btrfs
 btrfs-progs
 base
-base-devel
 efibootmgr
