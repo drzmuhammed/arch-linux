@@ -140,21 +140,3 @@ echo -ne "
 configuring sudo rights
 "
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-
-su $USERNAME
-echo -ne "
--------------------------------------------------------------------------
-            INSTALLING AUR HELPER
--------------------------------------------------------------------------
-"
-if [[ ! $AUR_HELPER == none ]]; then
-  cd ~
-  git clone "https://aur.archlinux.org/$AUR_HELPER.git"
-  cd ~/$AUR_HELPER
-  makepkg -si --noconfirm
-  $AUR_HELPER -S --noconfirm --needed $(cat $PKGS_DIR/base-aur)
-else
-  echo "aur helper not installed because you havent selected any" 
-fi
-
-$PASSWORD | su
