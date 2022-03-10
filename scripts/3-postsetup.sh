@@ -94,7 +94,12 @@ enabling  ufw.service
 "
 systemctl enable --now ufw
 
+
+timedatectl --no-ask-password set-timezone ${TIME_ZONE}
+timedatectl --no-ask-password set-ntp 1
+
 echo -ne "
+
 -------------------------------------------------------------------------
             Creating Snapper Config
 -------------------------------------------------------------------------
