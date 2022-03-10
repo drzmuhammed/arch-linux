@@ -23,9 +23,8 @@ libb64
 linux-headers
 ncdu
 neofetch
-netctl
 netstat-nat
-network-manager-applet
+networkmanager
 ngrep
 os-prober
 patch
@@ -40,6 +39,4 @@ snapper
 thermald
 tlp
 ufw
-wireless_tools
-wpa_supplicant
 xdg-user-dirs
