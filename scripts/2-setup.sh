@@ -58,8 +58,6 @@ echo -ne "
 syncing harware clock
 "
 hwclock --systohc
-timedatectl --no-ask-password set-timezone ${TIME_ZONE}
-timedatectl --no-ask-password set-ntp 1
 
 echo -ne "
 generating locale
@@ -71,12 +69,16 @@ echo -ne "
 setting language and keyboard layout
 "
 echo -ne "LANG=en_US.UTF-8" >> /etc/locale.conf
-echo -ne "us" >> /etc/vconsole.conf
+echo -ne "KEYMAP=us" >> /etc/vconsole.conf
 
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << PASSWD_CMDS  | passwd
-${ROOT_PASSWORD}
-${ROOT_PASSWORD}
-PASSWD_CMDS
+echo -ne "
+setting host name
+"
+echo $NAME_OF_MACHINE > /etc/hostname
+echo -ne "127.0.0.1 localhost" >> /etc/hosts
+echo -ne "::1       localhost" >> /etc/hosts
+echo -ne "127.0.1.1 $NAME_OF_MACHINE.localdomain $NAME_OF_MACHINE" >> /etc/hosts
+
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -86,38 +88,6 @@ echo -ne "
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -Sy --noconfirm --needed
 pacman -S --noconfirm --needed $(cat $PKGS_DIR/base-pacman)
-
-echo -ne "
--------------------------------------------------------------------------
-            SETTING UP ENCRYPTED SWAP
--------------------------------------------------------------------------
-"
-
-
-touch /swap/swapfile
-truncate -s 0 /swap/swapfile
-chattr +C /swap/swapfile
-btrfs property set /swap/swapfile compression none
-dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
-chmod 600 /swap/swapfile
-mkswap /swap/swapfile
-swapon /swap/swapfile
-
-echo -ne "/swap/swapfile none swap defaults 0 0" >> /etc/fstab
-
-echo -ne "
--------------------------------------------------------------------------
-            SETTING UP GRUB
--------------------------------------------------------------------------
-"
-
-sed -i 's/^MODULES=()/MODULES=(btrfs)/' /etc/mkinitcpio.conf
-sed -i 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems resume fsck)/' /etc/mkinitcpio.conf
-mkinitcpio -p linux
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
-sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:cryptedsda2 root=/dev/mapper/cryptedsda2 %g" /etc/default/grub
-grub-mkconfig -o /boot/grub/grub.cfg
-mkinitcpio -p linux
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -150,40 +120,45 @@ elif lspci | grep 'VGA' | grep -E "Radeon|AMD"; then
     pacman -S --noconfirm --needed xf86-video-amdgpu
 elif grep -E "Integrated Graphics Controller" <<< ${gpu_type}; then
     pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
-elif grep -E "Intel Corporation UHD" <<< ${gpu_type}; then
+elif grep -E "Intel Corporation" | grep -E "HD Graphics"<<< ${gpu_type}; then
     pacman -S --needed --noconfirm mesa vulkan-intel
 fi
-    
-echo -ne"
+echo -ne "
 -------------------------------------------------------------------------
-                    Adding User
+            SETTING UP ENCRYPTED SWAP
 -------------------------------------------------------------------------
 "
-if [ $(whoami) = "root"  ]; then
-    useradd -m -G wheel -s /bin/bash $USERNAME 
-    echo "$USERNAME created, home directory created, added to wheel group, default shell set to /bin/bash"
 
-# use chpasswd to enter $USERNAME:$password
-    echo "$USERNAME:$PASSWORD" | chpasswd
-    echo "$USERNAME password set"
+touch /swap/swapfile
+truncate -s 0 /swap/swapfile
+chattr +C /swap/swapfile
+btrfs property set /swap/swapfile compression none
+dd if=/dev/zero of=/swap/swapfile bs=1M count=8192
+chmod 600 /swap/swapfile
+mkswap /swap/swapfile
+swapon /swap/swapfile
 
-    cp -R $HOME/arch-linux /home/$USERNAME/
-    chown -R $USERNAME: /home/$USERNAME/arch-linux
-    echo "arch-linux copied to home directory"
-
-# enter $NAME_OF_MACHINE to /etc/hostname
-	echo $NAME_OF_MACHINE > /etc/hostname
-else
-	echo "You are already a user proceed with  installs"
-fi
-
-echo -ne "127.0.0.1 localhost" >> /etc/hosts
-echo -ne "::1       localhost" >> /etc/hosts
-echo -ne "127.0.1.1 $NAME_OF_MACHINE.localdomain $NAME_OF_MACHINE" >> /etc/hosts
+echo -ne "/swap/swapfile none swap defaults 0 0" >> /etc/fstab
+echo -ne "
+-------------------------------------------------------------------------
+            SETTING UP ROOT PASSWORD
+-------------------------------------------------------------------------
+"
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << PASSWD_CMDS  | passwd
+${ROOT_PASSWORD}
+${ROOT_PASSWORD}
+PASSWD_CMDS
 
 echo -ne "
-configuring sudo rights
+-------------------------------------------------------------------------
+            SETTING UP GRUB
+-------------------------------------------------------------------------
 "
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
-
+sed -i 's/^MODULES=()/MODULES=(btrfs)/' /etc/mkinitcpio.conf
+sed -i 's/^HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)/HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems resume fsck)/' /etc/mkinitcpio.conf
+mkinitcpio -P
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
+sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:cryptedsda2 root=/dev/mapper/cryptedsda2 %g" /etc/default/grub
+grub-mkconfig -o /boot/grub/grub.cfg
+mkinitcpio -P 
