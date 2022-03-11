@@ -134,7 +134,8 @@ echo -ne "
 "
 pacman -S --noconfirm --needed archlinux-keyring
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap) --noconfirm --needed
-cp -R ${SCRIPT_DIR} /mnt/arch-install/arch-linux
+mkdir /mnt/arch-linux
+cp -R ${SCRIPT_DIR} /mnt/arch-linux
 chmod +x /mnt/arch-install/arch-linux/scripts/2-setup.sh 
 chmod +x /mnt/arch-install/arch-linux/scripts/3-postsetup.sh
 
