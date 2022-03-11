@@ -19,7 +19,7 @@ set +a
 source $CONFIGS_DIR/setup.conf
 ( bash $SCRIPTS_DIR/1-presetup.sh )|& tee 1-presetup.log
 ( arch-chroot /mnt $HOME/arch-linux/scripts/2-setup.sh )|& tee 2-setup.log
-# ( arch-chroot /mnt $HOME/arch-linux/scripts/3-postsetup.sh )|& tee 3-postsetup.log
+( arch-chroot /mnt $HOME/arch-linux/scripts/3-postsetup.sh )|& tee 3-postsetup.log
 
 cp -v *.log /mnt/home/$USERNAME
 
