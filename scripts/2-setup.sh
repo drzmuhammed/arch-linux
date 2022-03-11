@@ -85,7 +85,6 @@ echo -ne "
             INSTALLING ARCH LINUX CORE PACKAGES
 -------------------------------------------------------------------------
 "
-sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -Sy --noconfirm --needed
 pacman -S --noconfirm --needed $(cat $PKGS_DIR/base-pacman)
 
