@@ -143,7 +143,4 @@ echo -ne "
             Removing Arch Linux Setup Files
 -------------------------------------------------------------------------
 "
-rm -r $HOME/arch-linux
-rm -r /home/$USERNAME/arch-linux
-# Replace in the same state
-cd $pwd
+rm -r /root/arch-linux
