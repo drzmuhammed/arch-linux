@@ -145,5 +145,3 @@ grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --re
 sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:cryptedsda2 root=/dev/mapper/cryptedsda2 %g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 mkinitcpio -P 
-
-umount -R /mnt
