@@ -85,7 +85,7 @@ echo -ne "
             INSTALLING ARCH LINUX CORE PACKAGES
 -------------------------------------------------------------------------
 "
-pacman -Sy --noconfirm --needed
+pacman -Syu --noconfirm --needed
 pacman -S --noconfirm --needed $(cat $PKGS_DIR/base-pacman)
 
 echo -ne "
