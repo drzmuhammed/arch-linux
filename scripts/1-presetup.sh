@@ -84,8 +84,8 @@ echo -ne "
 pacman -S --noconfirm --needed archlinux-keyring
 pacstrap /mnt $(cat $PKGS_DIR/base-pacstrap) --noconfirm --needed
 cp -R ${SCRIPT_DIR} /mnt/root/arch-linux
-chmod +x /mnt/root/arch-linux/scripts/2-setup.sh 
-chmod +x /mnt/root/arch-linux/scripts/3-postsetup.sh
+chmod +x /mnt/${HOME}/arch-linux/scripts/2-setup.sh 
+chmod +x /mnt/${HOME}/arch-linux/scripts/3-postsetup.sh
 
 echo -ne "
 ------------------------------------------------------------------------
