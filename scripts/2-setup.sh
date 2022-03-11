@@ -1,53 +1,6 @@
 #!/usr/bin/env bash
 
-source $HOME/arch-linux/configs/setup.conf
-
-#SAVING SETUP PARAMETERS
-if ! source $HOME/arch-linux/configs/setup.conf; then
-	# Loop through user input until the user gives a valid username
-	while true
-	do 
-		read -p "Please enter your username: " username
-		# username regex per response here https://unix.stackexchange.com/questions/157426/what-is-the-regex-to-validate-linux-users
-		# lowercase the username to test regex
-		if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
-		then 
-			break
-		fi 
-		echo "Incorrect username."
-	done 
-
-    # Loop through user input until the user gives a valid hostname, but allow the user to force save 
-	while true
-	do 
-		read -p "Please name your machine/host name: " name_of_machine
-		# hostname regex (!!couldn't find spec for computer name!!)
-		if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
-		then 
-			break 
-		fi 
-		# if validation fails allow the user to force saving of the hostname
-		read -p "Hostname doesn't seem correct. Do you still want to save it? (y/n)" force 
-		if [[ "${force,,}" = "y" ]]
-		then 
-			break 
-		fi 
-	done 
-
-    echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/arch-linux/configs/setup.conf
-    # convert name to lowercase before saving to setup.conf
-    echo "USERNAME=${username,,}" >> ${HOME}/arch-linux/configs/setup.conf
-    #Set luks Password
-    read -p "Please enter your luks password: " luks_password
-    echo "LUKS_PASSWORD=${luks_password,,}" >> ${HOME}/arch-linux/configs/setup.conf
-    #Set root Password
-    read -p "Please set root password: " root_password
-    echo "ROOT_PASSWORD=${root_password,,}" >> ${HOME}/arch-linux/configs/setup.conf
-    # Set user Password
-    read -p "Please enter your password: " password
-    echo "PASSWORD=${password,,}" >> ${HOME}/arch-linux/configs/setup.conf
-
-fi
+source /arch-install/arch-linux/configs/setup.conf
 
 echo -ne "
 setting up place and local time
